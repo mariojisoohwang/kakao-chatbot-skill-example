@@ -65,38 +65,23 @@ async def skill(req: ChatbotRequest):
 (1)에서 요청에 포함된 ```userRequest.callbackUrl```로 HTTP POST 요청을 보냅니다.
 
 
-# 배포하기 
 
-[![Vercel로 배포하기](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mariojisoohwang/kakao-chatbot-skill-example)
+## 배포하기 
 
-위의 버튼을 누르면 이 소스 코드를 기반으로 빌드, 배포가 진행됩니다.
-대략적인 과정은 다음과 같습니다.
-* 나의 github repository에 이 예제 코드가 clone 됨 
-* 복제된 repository기반으로 Docker image를 빌드
-* vercel cloud 서비스에 배포 
+### Fly.io 사용 예시 
+*  참고 : https://fly.io/docs/languages-and-frameworks/python/ 
 
-# 스킬서버 설정하기
-
-## Vercel에 배포된 domain 확인하기
-<img width="1236" alt="image" src="https://github.com/mariojisoohwang/kakao-chatbot-skill-example/assets/970595/14a42ef3-9255-442b-8c53-4bea6103d8bb">
-
-Domains에 있는 ```test5-jet.vercel.app```이 배포된 도메인입니다.
-
-## 스킬 만들기
-예제에는 4개의 endpoint가 만들어져 있습니다.  이것은 각각 다음과 같이 Full URL로 바꿀 수 있습니다.
-```
-/skill/hello  -->  https://test5-jet.vercel.app/skill/hello
-/skill/basic-card --> https://test5-jet.vercel.app/skill/basic-card
-/skill/commerce-card --> https://test5-jet.vercel.app/skill/commerce-card
-/callback --> https://test5-jet.vercel.app/callback
+1. flyctl 설치  (https://fly.io/docs/hands-on/install-flyctl/)
 
 ```
-<img width="974" alt="image" src="https://github.com/mariojisoohwang/kakao-chatbot-skill-example/assets/970595/ff0439ee-2e19-483f-be8d-5698fee09211">
+brew install flyctl
+```
 
-## 블록에 스킬 서버 연결하기 
-1. 위에서 만든 ```My Skill```을 선택합니다.
-2. 봇응답을 ```스킬데이터 사용```으로 변경합니다.
-3. 저장
 
-<img width="759" alt="image" src="https://github.com/mariojisoohwang/kakao-chatbot-skill-example/assets/970595/9c8fbdab-aa01-400f-bcf5-35d44723f79c">
+2. Lauch
+
+```
+cd <project home>;
+fly launch
+```
 
