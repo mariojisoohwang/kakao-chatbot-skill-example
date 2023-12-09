@@ -21,19 +21,19 @@ async def home():
     return HTMLResponse(content=page, status_code=200)
 
 @app.post("/skill/hello")
-async def skill(req: ChatbotRequest):
+async def sample1(req: ChatbotRequest):
     return simple_text_sample
 
 @app.post("/skill/basic-card")
-async def skill(req: ChatbotRequest):
+async def sample2(req: ChatbotRequest):
     return basic_card_sample
 
 @app.post("/skill/commerce-card")
-async def skill(req: ChatbotRequest):
+async def sample3(req: ChatbotRequest):
     return commerce_card_sample
 
 @app.post("/callback")
-async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
+async def callback1(req: ChatbotRequest, background_tasks: BackgroundTasks):
     background_tasks.add_task(callback_handler, req)
 
     out = {
@@ -47,7 +47,7 @@ async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
 
 
 @app.post("/callback2")
-async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
+async def callback2(req: ChatbotRequest, background_tasks: BackgroundTasks):
     thread = threading.Thread(target=callback_handler2, args=(req,))
     thread.start()
 
