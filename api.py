@@ -32,21 +32,21 @@ async def skill(req: ChatbotRequest):
 async def skill(req: ChatbotRequest):
     return commerce_card_sample
 
-# @app.post("/callback")
-# async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
-#     #background_tasks.add_task(callback_handler, req)
-
-#     out = {
-#         "version" : "2.0",
-#         "useCallback" : True,
-#         "data": {
-#             "text" : "생각하고 있는 중이에요😘 \n15초 정도 소요될 거 같아요 기다려 주실래요?!"
-#         }
-#     }
-#     return out
-
-
 @app.post("/callback")
+async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
+    background_tasks.add_task(callback_handler, req)
+
+    out = {
+        "version" : "2.0",
+        "useCallback" : True,
+        "data": {
+            "text" : "생각하고 있는 중이에요😘 \n15초 정도 소요될 거 같아요 기다려 주실래요?!"
+        }
+    }
+    return out
+
+
+@app.post("/callback2")
 async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
     thread = threading.Thread(target=callback_handler2, args=(req,))
     thread.start()

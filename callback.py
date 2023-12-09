@@ -33,25 +33,25 @@ async def callback_handler(request: ChatbotRequest) -> dict:
                 await resp.json()
 
 
-def callback_handler2(request: ChatbotRequest):
-    url = request.userRequest.callbackUrl
-    ic(url)
-    payload = {
-        "version": "2.0",
-        "template": {
-            "outputs": [
-                {
-                    "simpleText": {
-                        "text": "콜백 응답~"
-                    }
-                }
-            ]
-        }
-    }
+# def callback_handler2(request: ChatbotRequest):
+#     url = request.userRequest.callbackUrl
+#     ic(url)
+#     payload = {
+#         "version": "2.0",
+#         "template": {
+#             "outputs": [
+#                 {
+#                     "simpleText": {
+#                         "text": "콜백 응답~"
+#                     }
+#                 }
+#             ]
+#         }
+#     }
 
-    try:
-        headers = { 'Content-Type': 'application/json' }
-        res = requests.post(url, headers=headers, data=json.dumps(payload))
-        ic(res.text)
-    except Exception as e:
-        ic(e)
+#     try:
+#         headers = { 'Content-Type': 'application/json' }
+#         res = requests.post(url, headers=headers, data=json.dumps(payload))
+#         ic(res.text)
+#     except Exception as e:
+#         ic(e)
