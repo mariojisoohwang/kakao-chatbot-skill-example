@@ -4,7 +4,8 @@ from fastapi import BackgroundTasks
 from fastapi.responses import HTMLResponse
 from dto import ChatbotRequest
 from samples import simple_text_sample, basic_card_sample, commerce_card_sample
-from callback import callback_handler
+from callback import callback_handler, callback_handler2
+import threading
 
 app = FastAPI()
 
@@ -13,7 +14,7 @@ async def home():
     page = """
     <html>
         <body>
-            <h2>카카오 챗봇빌더 스킬 예제입니다</h2>
+            <h2>카카오 챗봇빌더 스킬 예제입니다 : )</h2>
         </body>
     </html>
     """
@@ -31,9 +32,25 @@ async def skill(req: ChatbotRequest):
 async def skill(req: ChatbotRequest):
     return commerce_card_sample
 
+# @app.post("/callback")
+# async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
+#     #background_tasks.add_task(callback_handler, req)
+
+#     out = {
+#         "version" : "2.0",
+#         "useCallback" : True,
+#         "data": {
+#             "text" : "생각하고 있는 중이에요😘 \n15초 정도 소요될 거 같아요 기다려 주실래요?!"
+#         }
+#     }
+#     return out
+
+
 @app.post("/callback")
 async def skill(req: ChatbotRequest, background_tasks: BackgroundTasks):
-    background_tasks.add_task(callback_handler, req)
+    thread = threading.Thread(target=callback_handler2, args=(req,))
+    thread.start()
+
     out = {
         "version" : "2.0",
         "useCallback" : True,
