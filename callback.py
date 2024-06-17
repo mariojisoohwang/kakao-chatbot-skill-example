@@ -1,57 +1,35 @@
 #-*- coding: utf-8 -*-
 
 from dto import ChatbotRequest
-from samples import simple_text_sample
 import aiohttp
-import time
-import requests
-import json
-from icecream import ic
+
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(name)-16s %(levelname)-8s %(message)s ',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
 
 async def callback_handler(request: ChatbotRequest) -> dict:
-
-    time.sleep(1.0)
-
     url = request.userRequest.callbackUrl
-
+    logger.info(f"callback url: {url}")
     payload = {
         "version": "2.0",
         "template": {
             "outputs": [
                 {
                     "simpleText": {
-                        "text": "콜백 응답~"
+                        "text": "안녕하세요! 저는 챗봇입니다."
                     }
                 }
             ]
         }
     }
-
     if url:
         async with aiohttp.ClientSession() as session:
             async with session.post(url=url, json=payload) as resp:
-                await resp.json()
-
-
-# def callback_handler2(request: ChatbotRequest):
-#     url = request.userRequest.callbackUrl
-#     ic(url)
-#     payload = {
-#         "version": "2.0",
-#         "template": {
-#             "outputs": [
-#                 {
-#                     "simpleText": {
-#                         "text": "콜백 응답~"
-#                     }
-#                 }
-#             ]
-#         }
-#     }
-
-#     try:
-#         headers = { 'Content-Type': 'application/json' }
-#         res = requests.post(url, headers=headers, data=json.dumps(payload))
-#         ic(res.text)
-#     except Exception as e:
-#         ic(e)
+                r = await resp.json()
+                logger.info(f"response: {r}")
