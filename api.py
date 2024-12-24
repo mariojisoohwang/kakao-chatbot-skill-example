@@ -1,64 +1,98 @@
-#-*- coding: utf-8 -*-
 from fastapi import FastAPI
-from fastapi import BackgroundTasks
-from fastapi.responses import HTMLResponse
 from dto import ChatbotRequest
-from samples import simple_text_sample, basic_card_sample, commerce_card_sample
-from callback import callback_handler
 import threading
-
 import logging
+import time
+import requests
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s %(name)-16s %(levelname)-8s %(message)s ',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
 @app.get("/")
-async def home():
-    page = """
-    <html>
-        <body>
-            <h2>카카오 챗봇빌더 스킬 예제입니다 : )</h2>
-        </body>
-    </html>
-    """
-    return HTMLResponse(content=page, status_code=200)
+async def root():
+    return { "name": "Kakao Chatbot Skill Examples" }
 
-@app.post("/skill/hello")
-async def sample1(req: ChatbotRequest):
+######################################################
+# Response Format Samples
+######################################################
+
+simple_text_sample = {
+    "version": "2.0",
+    "template": {
+        "outputs": [
+            {
+                "simpleText": {
+                    "text": "What is your choice?"
+                }
+            }
+        ],
+        "quickReplies": [
+            {
+                "messageText": "Your choice is 1.",
+                "action": "message",
+                "label": "choice 1"
+            },
+            {
+                "messageText": "Your choice is 2.",
+                "action": "message",
+                "label": "choice 2"
+            },
+        ]
+    }
+}
+
+simple_image_sample = {
+    "version": "2.0",
+    "template": {
+        "outputs": [
+            {
+                "simpleImage": {
+                    "imageUrl": "https://t1.kakaocdn.net/openbuilder/sample/lj3JUcmrzC53YIjNDkqbWK.jpg",
+                    "altText": "A treasure chest is placed on the sandy beach."
+                }
+            },
+            {
+                "simpleText": {
+                    "text": "Here is your image."
+                }
+            }
+        ]
+    }
+}
+
+
+######################################################
+# Webhook Example
+######################################################
+
+@app.post("/skill")
+async def skill_example(req: ChatbotRequest):
     return simple_text_sample
 
-@app.post("/skill/basic-card")
-async def sample2(req: ChatbotRequest):
-    return basic_card_sample
 
-@app.post("/skill/commerce-card")
-async def sample3(req: ChatbotRequest):
-    return commerce_card_sample
+######################################################
+#  Callback Example
+######################################################
+
+def callback_handler(request: ChatbotRequest) -> dict:
+    callback_url = request.userRequest.callbackUrl
+    time.sleep(3)
+    if callback_url:
+        requests.post(callback_url, json=simple_image_sample)
+
 
 @app.post("/callback")
-async def callback1(req: ChatbotRequest, background_tasks: BackgroundTasks):
-    background_tasks.add_task(callback_handler, req)
-    out = { "version": "2.0", "useCallback": True }
-    return out
+async def callback_example(req: ChatbotRequest):
 
+    threading.Thread(target=callback_handler, args=(req,)).start()
 
-# @app.post("/callback2")
-# async def callback2(req: ChatbotRequest, background_tasks: BackgroundTasks):
-#     thread = threading.Thread(target=callback_handler2, args=(req,))
-#     thread.start()
-
-#     out = {
-#         "version" : "2.0",
-#         "useCallback" : True,
-#         "data": {
-#             "text" : "생각하고 있는 중이에요😘 \n15초 정도 소요될 거 같아요 기다려 주실래요?!"
-#         }
-#     }
-#     return out
+    intermediate_message = {
+        "version": "2.0",
+        "useCallback": True,
+        "data": {
+            "text" : "processing..."
+        }
+    }
+    return intermediate_message
