@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from dto import ChatbotRequest
+from dto import ChatbotRequest, EventApiParameters, EventApiResponse
 import threading
 import logging
 import time
@@ -96,3 +96,36 @@ async def callback_example(req: ChatbotRequest):
         }
     }
     return intermediate_message
+
+
+######################################################
+#  EventAPI Using Example
+######################################################
+
+@app.post("/event-api-trigger")
+async def event_api_trigger(
+        req: EventApiParameters  # Parameters required for using the Event API.
+):
+    # The parts below are examples of what users of the Event API should implement.
+    event_api_url = f'https://bot-api.kakao.com/v2/bots/{req.botId}/talk'
+
+    headers = {
+        "Authorization": f'KakaoAK {req.kakaoRestApiAppKey}',
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "event": {
+            "name": req.eventName
+        },
+        "user": [
+            {
+                "type": user.type.value,
+                "id": user.id
+            } for user in req.users
+        ]
+    }
+
+    response = requests.post(url=event_api_url, headers=headers, json=data)
+
+    return EventApiResponse(**response.json())
